@@ -1,0 +1,13 @@
+{
+  "name": "skom/cartbooks_kesearch_indexer",
+  "type": "typo3-cms-extension",
+  "description": "ke_search indexer for cart + cart_books",
+  "autoload": {
+    "psr-4": {
+      "Skom\\CartbooksKesearchIndexer\\": "Classes"
+    }
+  },
+  "require": {
+    "typo3/cms-core": "^8.7"
+  }
+}

@@ -25,7 +25,7 @@ class CartBooksIndexer
         $customIndexer = array(
             '[CUSTOM] Cart-Books-Indexer (ext:cart_books)',
             $this->indexerConfigurationKey,
-            ExtensionManagementUtility::extRelPath('cartbooks_kesearch_indexer') . 'cartbooks_indexer_icon.svg'
+            ExtensionManagementUtility::extPath('cartbooks_kesearch_indexer') . 'cartbooks_indexer_icon.svg'
         );
         $params['items'][] = $customIndexer;
     }
@@ -87,6 +87,7 @@ class CartBooksIndexer
                         'orig_pid' => $record['pid'],
                         'sortdate' => $record['datetime'],
                     );
+                    $abstract = '<strong>Autor:</strong> '.strip_tags($record['author']).'<br />'.strip_tags($record['teaser']);
 
                     // add something to the title, just to identify the entries
                     // in the frontend

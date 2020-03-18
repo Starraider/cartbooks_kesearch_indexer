@@ -89,9 +89,7 @@ class CartBooksIndexer
                 $fullContent = $title . "\n" . $subtitle . "\n" . $author . "\n" . $genre . "\n" . $teaser . "\n" . $description;
                 $abstract = strip_tags($record['teaser']);
                 // Link to detail view
-                //produkt-details?tx_cartbooks_books%5Bbook%5D=4&cHash=1f4d7a47d36da78d70504203a4e99d1a
-                //$params = '&tx_cartbooks_books[Book]='.$uid.'&cart_books[controller]=Books&cart_books[action]=show';
-                $params = '&tx_cartbooks_books[Book]='.$uid.'&tx_cartbooks_books[controller]=Book&tx_cartbooks_books[action]=show';
+                $params = '&tx_cartbooks_books[controller]=Book&tx_cartbooks_books[action]=show&tx_cartbooks_books[book]='.$uid;
                 // Additional information
                 $additionalFields = array(
                     'sortdate' => $record['crdate'],

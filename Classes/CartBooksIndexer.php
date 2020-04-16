@@ -9,6 +9,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\RootLevelRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 // set you own class name
 class CartBooksIndexer
 {
@@ -82,12 +83,32 @@ class CartBooksIndexer
                 $title      = strip_tags($record['title']);
                 $subtitle   = strip_tags($record['subtitle']);
                 $author     = strip_tags($record['author']);
+                $editor     = strip_tags($record['editor']);
                 $genre      = strip_tags($record['genre']);
                 $teaser     = strip_tags($record['teaser']);
                 $description = strip_tags($record['description']);
                 $uid = $record['uid'];
-                $fullContent = $title . "\n" . $subtitle . "\n" . $author . "\n" . $genre . "\n" . $teaser . "\n" . $description;
-                $abstract = strip_tags($record['teaser']);
+                $fullContent = $title . "\n" . $subtitle . "\n" . $author . "\n" . $editor . "\n" . $genre . "\n" . $teaser . "\n" . $description;
+                $abstract = '';
+                if (strip_tags($record['author']) != '') {
+                    $abstract .= LocalizationUtility::translate('cartbooks_kesearch_indexer.author','cartbooks_kesearch_indexer').': ';
+                    $abstract .= strip_tags($record['author']).", ";
+                }
+                if (strip_tags($record['editor']) != '') {
+                    $abstract .= LocalizationUtility::translate('cartbooks_kesearch_indexer.editor','cartbooks_kesearch_indexer').': ';
+                    $abstract .= strip_tags($record['editor']).", ";
+                }
+                $abstract .= "<br />";
+                $abstract .= date("Y", $record['date_of_publication']).", ";
+                if (strip_tags($record['number_of_pages']) != '') {
+                    $abstract .= LocalizationUtility::translate('cartbooks_kesearch_indexer.pages','cartbooks_kesearch_indexer').': ';
+                    $abstract .= strip_tags($record['number_of_pages']).", ";
+                }
+                $abstract .= LocalizationUtility::translate('cartbooks_kesearch_indexer.price','cartbooks_kesearch_indexer').': ';
+                $abstract .= sprintf("%01.2f", $record['price'])." ";
+                $abstract .= LocalizationUtility::translate('cartbooks_kesearch_indexer.currency','cartbooks_kesearch_indexer')."<br />";
+
+                $abstract .= strip_tags($record['teaser']);
                 // Link to detail view
                 $params = '&tx_cartbooks_books[controller]=Book&tx_cartbooks_books[action]=show&tx_cartbooks_books[book]='.$uid;
                 // Additional information

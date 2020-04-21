@@ -24,6 +24,8 @@ $EM_CONF[$_EXTKEY] = array (
         'depends' => 
         array (
             'typo3' => '8.7.0-9.5.99',
+            'cart-books' => '2.0.0-2.99.99',
+            'ke_search' => '3.1.0-3.99.99'
         ),
         'conflicts' => 
         array (

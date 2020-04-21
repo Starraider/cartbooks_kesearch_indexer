@@ -10,6 +10,8 @@
 cartbooks_kesearch_indexer
 ==========================
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://PayPal.me/SvenKalbhenn)
+
 cartbooks_kesearch_indexer is a custom indexer for the extension ke_search.
 
 It indexes records from the extension "cart_books" (ext:cart_books).

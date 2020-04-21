@@ -10,6 +10,7 @@ use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\RootLevelRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+
 // set you own class name
 class CartBooksIndexer
 {
@@ -55,11 +56,6 @@ class CartBooksIndexer
             // get the elements with frontend user group access restrictions
             // or time (start / stop) restrictions, in order to copy those restrictions to the index.
 
-
-            ///////////
-
-            //$where = 'pid IN (' .  . ') AND hidden = 0 AND deleted = 0';
-            //$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $table, $where, $groupBy, $orderBy, $limit);
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_cartbooks_domain_model_book');
             $queryBuilder->getRestrictions()
                 ->removeAll()
@@ -75,6 +71,7 @@ class CartBooksIndexer
                 )
                 ->orderBy('uid')
                 ->execute();
+            
             // Loop through the records and write them to the index.
             $counter = 0;
             while (($record = $rows->fetch())) {
@@ -89,6 +86,8 @@ class CartBooksIndexer
                 $description = strip_tags($record['description']);
                 $uid = $record['uid'];
                 $fullContent = $title . "\n" . $subtitle . "\n" . $author . "\n" . $editor . "\n" . $genre . "\n" . $teaser . "\n" . $description;
+                
+                // Build the abstract, which is the output in the search result
                 $abstract = '';
                 if (strip_tags($record['author']) != '') {
                     $abstract .= LocalizationUtility::translate('cartbooks_kesearch_indexer.author','cartbooks_kesearch_indexer').': ';
@@ -109,6 +108,7 @@ class CartBooksIndexer
                 $abstract .= LocalizationUtility::translate('cartbooks_kesearch_indexer.currency','cartbooks_kesearch_indexer')."<br />";
 
                 $abstract .= strip_tags($record['teaser']);
+
                 // Link to detail view
                 $params = '&tx_cartbooks_books[controller]=Book&tx_cartbooks_books[action]=show&tx_cartbooks_books[book]='.$uid;
                 // Additional information
@@ -120,9 +120,12 @@ class CartBooksIndexer
                 );
 
                 //************* Tags *************/
+                // The tags are the facetes which you can later use as filter.
+                // I use the categories and the tags from cart_books as tags for ke_search
+                //
                 // If you youse Sphinx, use "_" instead of "#" (configurable in the extension manager)
                 $tags = '';
-                //** categories **/
+                //** cart_books categories **/
                 $categoryQueryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_category');
                 $categoryQueryBuilder->getRestrictions()
                     ->removeAll()
@@ -150,7 +153,7 @@ class CartBooksIndexer
                     $tags .= '#'.strip_tags($catrecord['title']).'#';
                     $tagCounter++;
                 }
-                //** tags **/
+                //** cart_books tags **/
                 $tagQueryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_cart_domain_model_tag');
                 $tagQueryBuilder->getRestrictions()
                     ->removeAll()
@@ -169,7 +172,7 @@ class CartBooksIndexer
                     )
                     ->orderBy('m.sorting')
                     ->execute();
-                // Loop through the categories and add to tags
+                // Loop through the tags and add to tags
                 while ($tagrecord = $tagRows->fetch()) {
                     if ($tagCounter > 0){
                         $tags .= ', ';
@@ -181,9 +184,9 @@ class CartBooksIndexer
 
 
 
-                // add something to the title, just to identify the entries
+                // You can add something to the title, to identify the entries
                 // in the frontend
-                //$title = '[Books] ' . $title;
+                // $title = '[Books] '.$title;
 
                 // ... and store the information in the index
                 $indexerObject->storeInIndex(
@@ -209,8 +212,6 @@ class CartBooksIndexer
                 '<p><b>Cart Books Indexer "'
                 . $indexerConfig['title'] . '": ' . $counter
                 . ' Books have been indexed.</b></p>';
-        
-
             return $content;
         }
     }

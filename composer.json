@@ -9,7 +9,7 @@
   },
   "require": {
     "typo3/cms-core": "^8.7",
-    "extcode/cart-books": "^2.0",
+    "extcode/cart_books": "^2.0",
     "teaminmedias-pluswerk/ke_search": "^3.1"
   }
 }
